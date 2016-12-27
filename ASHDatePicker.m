@@ -8,7 +8,11 @@
 
 #import "ASHDatePicker.h"
 
-@implementation ASHDatePicker
+@implementation ASHDatePicker {
+    
+    SEL _action;
+    id _target;
+}
 
 @synthesize popover = _popover;
 @synthesize delegate = _delegate;
@@ -17,39 +21,30 @@
 - (void)popoverDateAction
 {
     self.dateValue = controller.datePicker.dateValue;
-    // Update bound value...
-    NSDictionary *bindingInfo = [self infoForBinding:NSValueBinding];
-    [[bindingInfo valueForKey:NSObservedObjectKey] setValue:self.dateValue
-                                                 forKeyPath:[bindingInfo valueForKey:NSObservedKeyPathKey]];
+    [NSApp sendAction:_action to:_target from:self];
 }
 
--(void)dateAction
-{
+- (void)dateAction {
+    
     controller.datePicker.dateValue = self.dateValue;
+    [NSApp sendAction:_action to:_target from:self];
 }
 
 - (void)awakeFromNib
 {
-    controller = [[ASHDatePickerController alloc] init];
+    _action = self.action;
+    _target = self.target;
     self.action = @selector(dateAction);
+    self.target = self;
+
+    controller = [[ASHDatePickerController alloc] init];
     controller.datePicker.action = @selector(popoverDateAction);
-    [controller.datePicker bind:NSValueBinding toObject:self withKeyPath:@"dateValue" options:nil];
     
     _popover = [[NSPopover alloc] init];
     _popover.contentViewController = controller;
     _popover.behavior = NSPopoverBehaviorSemitransient;
     
     _preferredPopoverEdge = NSMaxXEdge;
-}
-
-- (id)initWithFrame:(NSRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code here.   
-    }
-    
-    return self;
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
@@ -61,15 +56,15 @@
 - (BOOL)becomeFirstResponder
 {
     showingPopover = YES;
-    controller.datePicker.dateValue = self.dateValue;
     
-    if (![_delegate respondsToSelector:@selector(datePickerShouldShowPopover:)]
-        || [_delegate datePickerShouldShowPopover:self]) {
-        
+    if (![_delegate respondsToSelector:@selector(datePickerShouldShowPopover:)] || [_delegate datePickerShouldShowPopover:self]) {
+    
+        controller.datePicker.dateValue = self.dateValue;
         [_popover showRelativeToRect:self.bounds ofView:self preferredEdge:_preferredPopoverEdge];
     }
     
     showingPopover = NO;
+    
     return [super becomeFirstResponder];
 }
 
