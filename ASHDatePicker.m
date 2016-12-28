@@ -51,22 +51,17 @@
 
 - (BOOL)becomeFirstResponder
 {
-    showingPopover = YES;
-    
-    if (![_popoverDelegate respondsToSelector:@selector(datePickerShouldShowPopover:)] || [_popoverDelegate datePickerShouldShowPopover:self]) {
+    if ([_popoverDelegate respondsToSelector:@selector(datePickerShouldShowPopover:)] && [_popoverDelegate datePickerShouldShowPopover:self]) {
     
         controller.datePicker.dateValue = self.dateValue;
         [_popover showRelativeToRect:self.bounds ofView:self preferredEdge:_preferredPopoverEdge];
     }
-    
-    showingPopover = NO;
-    
+
     return [super becomeFirstResponder];
 }
 
 - (BOOL)resignFirstResponder
 {
-    if (showingPopover) return NO;
     [_popover close];
     return [super resignFirstResponder];
 }

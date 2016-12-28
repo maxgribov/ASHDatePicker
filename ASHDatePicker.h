@@ -15,7 +15,6 @@
 @interface ASHDatePicker : NSDatePicker
 {
     ASHDatePickerController *controller;
-    BOOL showingPopover;
 }
 
 @property (strong, nonatomic) NSPopover *popover;
