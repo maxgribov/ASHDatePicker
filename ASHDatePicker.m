@@ -14,10 +14,6 @@
     id _target;
 }
 
-@synthesize popover = _popover;
-@synthesize delegate = _delegate;
-@synthesize preferredPopoverEdge = _preferredPopoverEdge;
-
 - (void)popoverDateAction
 {
     self.dateValue = controller.datePicker.dateValue;
@@ -57,7 +53,7 @@
 {
     showingPopover = YES;
     
-    if (![_delegate respondsToSelector:@selector(datePickerShouldShowPopover:)] || [_delegate datePickerShouldShowPopover:self]) {
+    if (![_popoverDelegate respondsToSelector:@selector(datePickerShouldShowPopover:)] || [_popoverDelegate datePickerShouldShowPopover:self]) {
     
         controller.datePicker.dateValue = self.dateValue;
         [_popover showRelativeToRect:self.bounds ofView:self preferredEdge:_preferredPopoverEdge];
