@@ -8,28 +8,31 @@
 
 #import "ASHDatePicker.h"
 
-@implementation ASHDatePicker {
-    
-    SEL _action;
-    id _target;
-}
+@interface ASHDatePicker ()
+
+@property (nonatomic, assign) SEL ownerAction;
+@property (nonatomic, weak) id ownerTarget;
+
+@end
+
+@implementation ASHDatePicker
 
 - (void)popoverDateAction
 {
     self.dateValue = controller.datePicker.dateValue;
-    [NSApp sendAction:_action to:_target from:self];
+    [NSApp sendAction:_ownerAction to:_ownerTarget from:self];
 }
 
 - (void)dateAction {
     
     controller.datePicker.dateValue = self.dateValue;
-    [NSApp sendAction:_action to:_target from:self];
+    [NSApp sendAction:_ownerAction to:_ownerTarget from:self];
 }
 
 - (void)awakeFromNib
 {
-    _action = self.action;
-    _target = self.target;
+    _ownerAction = self.action;
+    _ownerTarget = self.target;
     self.action = @selector(dateAction);
     self.target = self;
 
